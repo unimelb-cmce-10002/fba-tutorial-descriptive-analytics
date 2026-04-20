@@ -1,4 +1,4 @@
-<!-- question-type: in-class -->
+<!-- question-type: inclass -->
 ### Exercise 4: Preparing the Data for K-Means Clustering
 
 In the remaining exercises, we will use the following five numeric variables to build and compare K-means clustering models:
