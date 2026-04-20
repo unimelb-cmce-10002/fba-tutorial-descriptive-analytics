@@ -1,10 +1,15 @@
 ::: {.callout-tip}
+
 ## Learning Goals {.unnumbered}
 
 By the end of this tutorial, you should be able to:
 
-- Understand key factors related to employee attrition and their potential impact on the business.
-- Apply clustering techniques (K-means, PCA) to uncover segments of employees with different characteristics.
-- Interpret and compare the resulting clusters in terms of job satisfaction, income, tenure, and attrition risk.
-- Evaluate how well the clustering reflects meaningful differences using visualizations and summary statistics.
+* **Explain** why employee attrition matters as a business analytics problem and why segmentation can help an analytics team explore different attrition profiles.
+* **Construct** a simple rule-of-thumb employee segmentation using fixed thresholds and **interpret** attrition patterns across the resulting groups.
+* **Explain** what K-means clustering is trying to achieve and **compare** its strengths and limitations with a hand-built rule-of-thumb segmentation.
+* **Prepare** numeric variables for K-means clustering by selecting, scaling, and checking a preprocessing workflow in R.
+* **Implement and interpret** K-means clustering models using both a simple two-variable setup and a richer five-variable employee profile.
+* **Evaluate** a defensible choice of the number of clusters using the elbow method and **justify** that choice in words.
+* **Communicate** segmentation results in a short analytics team memo, including the main patterns, implications, and limitations of the analysis.
+
 :::

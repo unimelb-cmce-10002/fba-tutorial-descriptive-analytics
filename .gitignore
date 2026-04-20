@@ -9,3 +9,5 @@
 
 *_student.qmd
 *_files/*
+
+**/*.quarto_ipynb

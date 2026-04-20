@@ -1,80 +1,91 @@
 <!-- question-type: inclass -->
-### Exercise 6: Segmentation with Dimensionality Reduction
+### Exercise 6: Building a Richer K-Means Model
 
-We now explore whether simplifying our dataset — by reducing the number of dimensions — might help improve clustering.
+Your analytics team now wants to build a richer clustering model using all five scaled variables in `df_scaled`:
 
-Right now, we're clustering using all five numeric features. But some of these might contain similar information. 
-Dimensionality reduction helps us find a smaller number of new features (called components) that capture most of the variation in the data.
-Once we have reduced dimensionality, we can then run Segmentation on this reduced set of features.
-This will prove helpful in the next question when we want to use **all** variables in the dataset
+* `job_satisfaction`
+* `monthly_income`
+* `years_at_company`
+* `distance_from_home`
+* `age`
 
-One common method of dimensionality reduction is Principal Component Analysis (PCA).
+One challenge remains: we still need to choose a value for `k`, the number of clusters.
 
+A colleague suggests using the **elbow method** as a starting point.
 
-**(a)** Ask your tutor to briefly explain the intuition behind the PCA method and how it works.
-Then, in your own words, write down one thing that PCA is trying to do.
+**(a)** Explain what the elbow method is trying to do.
 
-**(b)** Run the code below to apply PCA to the `df_scaled` data.
-Then use summary(pca_model) to inspect how much variance is explained by the first few components.
-
-```{r}
-#| eval: false
-pca_model <- 
-    prcomp(df_scaled,
-           # because we have already done each of these
-           # set them to false
-           center = FALSE,   # if TRUE sets means to 0
-           scale. = FALSE)   # IF TRUE sets std dev to 1
-summary(pca_model)
-```
-
-**(c)** After looking at the output, suppose a colleague suggests "use 3 principal components". Explain why he might make that suggestion.
-
-**(d)** Another way to choose how many components to keep is to look at which variables are being absorbed into each components.
-Run the code below, and then decide how many components you want to keep, justifying your decision.
+**(b)** Run the code below to create an elbow plot for K-means clustering on `df_scaled`.
 
 ```{r}
 #| eval: false
-# PC1 variable contributions
-fviz_contrib(pca_model, choice = "var", axes = 1)
-
-# PC2 variable contributions
-fviz_contrib(pca_model, choice = "var", axes = 2)
-
-# PC3 variable contributions
-fviz_contrib(pca_model, choice = "var", axes = 3)
-
-# PC4 variable contributions
-fviz_contrib(pca_model, choice = "var", axes = 4)
-
-# PC5 variable contributions
-fviz_contrib(pca_model, choice = "var", axes = 5)
+fviz_nbclust(
+  df_scaled,
+  kmeans,
+  method = "wss",
+  k.max = 10,
+  nstart = 10
+)
 ```
 
-**(e)** Create a new PCA-transformed dataset with only the components you selected above by completing the code below:
+**(c)** Based on the elbow plot, what value of `k` would you choose? Briefly explain your answer.
 
-```{r}
-#| eval: false
-df_pca <- as_tibble(pca_model$x[, 1:YOUR_CHOICE])
-```
-
-**(f)** Run K-means on `df_pca` using 3 clusters.
+**(d)** Run K-means clustering on `df_scaled` using your chosen value of `k`.
 
 ```{r}
 #| eval: false
 set.seed(123)
-kmeans_pca <- kmeans(df_pca, centers = 3, nstart = 10)
+
+kmeans_full <-
+  kmeans(
+    YOUR_CODE,
+    centers = YOUR_CODE,
+    nstart = 10
+  )
 ```
 
-**(g)** Visualise the PCA clustering results using the code below. Did the three cluster model perform better compared to Exercise 4? Try and explain why.
+**(e)** Use the code below to visualise the clustering result.
 
 ```{r}
 #| eval: false
-fviz_cluster(kmeans_pca, data = df_pca)
+fviz_cluster(
+  kmeans_full,
+  data = df_scaled,
+  ggtheme = theme_minimal(),
+  main = "5-variable K-means clustering"
+)
 ```
 
+**(f)** What can the plot in (e) tell you about the clustering result? What can it not tell you on its own?
+
+**(g)** The code below combines the original employee data with the cluster assignments from your 5-variable K-means model.
+
+Using `df_compare_full`, calculate:
+
+* the number of employees in each cluster
+* the attrition rate in each cluster
+* the average value of each clustering variable in each cluster
+
+```{r}
+#| eval: false
+df_compare_full <-
+  df |>
+  select(
+    attrition,
+    job_satisfaction,
+    monthly_income,
+    years_at_company,
+    distance_from_home,
+    age
+  ) |>
+  mutate(cluster = as.factor(kmeans_full$cluster))
+
+df_compare_full |>
+  YOUR_CODE_HERE
+```
 
 <!-- BEGIN PROFILE:r-teaching-guide -->
+
 ::: {.content-visible when-profile="r-teaching-guide"}
 
 ::: {.teaching-block}
@@ -85,49 +96,47 @@ Teaching Note
 
 ::: {.teaching-block-body}
 
-🎯 **Learning Objective** 
+🎯 **Learning Objective**
+
 Students should:
 
-- Understand the intuition behind dimensionality reduction using PCA.
-- Identify when and why PCA can improve clustering.
-- Practice applying PCA to scaled numeric data.
-- Use component loadings and variance explained to decide how many components to keep.
-- Evaluate the effect of dimensionality reduction on clustering quality.
+* Use the elbow method to support a choice of `k` in a richer K-means model.
+* Run and inspect a 5-variable clustering model.
+* Recognize that choosing `k` involves judgment rather than a fully mechanical rule.
+* Summarise richer clusters using attrition rates and cluster means.
 
 ✅   **Core Concepts to Highlight**
 
-- Dimensionality reduction: Simplifying a dataset by summarizing information across correlated variables.
-- Principal Component Analysis (PCA): A method that transforms original variables into a smaller set of orthogonal components that explain the most variance.
-- Variance explained: Interpreting PCA output to understand how much of the original data structure is retained.
-- Component loadings: Using variable contributions to understand what each PC represents.
-- Segmentation in reduced space: Running k-means on the transformed data and comparing clustering results.
-
+* Moving from two variables to five gives K-means more scope to uncover broader employee profiles.
+* The elbow method looks at how within-cluster variation changes as `k` increases.
+* The goal is not to find a magically perfect answer, but to identify a defensible value of `k`.
+* Cluster plots are helpful, but in higher dimensions they are only partial summaries.
+* Cluster summaries are needed to understand what the clusters actually represent.
 
 💬 **Suggested In-Class Prompts** (if needed)
 
-“What kinds of situations call for dimensionality reduction?”
-
-“Can you think of examples where two variables might be telling us the same thing?”
-
-“What are the tradeoffs between keeping more or fewer principal components?”
-
-“Does clustering look more stable or interpretable after PCA?”
+* “Why might the richer five-variable model reveal patterns the two-variable model could not?”
+* “What is the elbow method trying to balance?”
+* “Does the elbow plot give one objectively correct answer, or does it still require judgment?”
+* “What can the cluster plot show us, and what do we still need the summary table for?”
 
 📌 **Common Misunderstandings**
 
-- Misinterpreting PCA axes: Students may think PCs are just the original variables reordered. Emphasize that each PC is a weighted combination of the original variables.
-- Ignoring the need to scale data: PCA assumes data is centered and scaled; remind students we did this in a previous exercise.
-- Using too many components: Keeping all components defeats the purpose of dimensionality reduction — we want a simplified representation.
-- Comparing cluster plots directly: Students may assume PCA space should "look" like original data space. Encourage focus on separation, not interpretability of axes.
+* Thinking the elbow plot always reveals a perfectly obvious value of `k`
+* Treating the elbow method as a strict rule rather than a decision aid
+* Assuming the cluster plot is enough to understand five-dimensional clusters
+* Forgetting to compare attrition rates and average characteristics together when interpreting clusters
 
 :::
 
 :::
 
 :::
+
 <!-- END PROFILE:r-teaching-guide -->
 
 <!-- BEGIN PROFILE:r-solutions -->
+
 ::: {.content-visible when-profile="r-solutions" when-profile="r-teaching-guide"}
 
 ::: {.solution-block}
@@ -138,98 +147,95 @@ Solution
 
 ::: {.solution-block-body}
 
-**(a)**
-PCA is a technique for dimensionality reduction. It creates new variables (called *principal components*) that are combinations of the original variables. These components capture the largest possible variance in the data, with each new component orthogonal (independent) from the previous ones.
+**(a) A colleague suggests using the elbow method. Explain what the elbow method is trying to do.**
 
-PCA is trying to:  
-- Reduce the number of variables while retaining as much information as possible  
-- Identify patterns in the data by summarising correlated variables
+The elbow method helps analysts choose a reasonable number of clusters by plotting how within-cluster variation changes as k increases. As more clusters are added, this variation will always fall, but after a certain point the improvement becomes much smaller. The analyst then looks for the "elbow" in the plot, where adding another cluster no longer gives a large reduction in within-cluster variation.
 
-**(b)** 
+**(b) Run the code below to create an elbow plot for K-means clustering on `df_scaled`.**
 
 ```{r}
 #| eval: true
-pca_model <- prcomp(df_scaled, center = FALSE, scale. = FALSE)
-summary(pca_model)
-```
-This shows how much variance each principal component explains.
-
-- PC explain ~37% of the variance
-- PC2 ~20%
-- PC3 ~20%
-- PC4 and PC5 less
-
-This suggests the first 3 components explain around 80% of the total variance.
-
-**(c)** Why choose 3 components?
-
-Because the first 3 components together explain most of the variance in the data (usually >75–80%), they provide a good summary while reducing noise and complexity. Including more components adds little additional insight and may reintroduce noise.
-
-**(d)** Variable contributions to each component
-
-```{r}
-#| eval: true
-# PC1 variable contributions
-fviz_contrib(pca_model, choice = "var", axes = 1)
-
-# PC2 variable contributions
-fviz_contrib(pca_model, choice = "var", axes = 2)
-
-# PC3 variable contributions
-fviz_contrib(pca_model, choice = "var", axes = 3)
-
-# PC4 variable contributions
-fviz_contrib(pca_model, choice = "var", axes = 4)
-
-# PC5 variable contributions
-fviz_contrib(pca_model, choice = "var", axes = 5)
+fviz_nbclust(
+  df_scaled,
+  kmeans,
+  method = "wss",
+  k.max = 10,
+  nstart = 10
+)
 ```
 
-From these plots, we can see:
+**(c) Based on the elbow plot, what value of `k` would you choose? Briefly explain your answer.**
 
-PC1 may be driven mostly by `monthly_income`, `years_at_company` and `age`
+A strong answer should choose a defensible value of `k` and justify it using the shape of the elbow plot. The key idea is that improvements become smaller after a certain point, even if the elbow is not perfectly sharp. We went with `k = 4`
 
-PC2 by `distance_from_home` and `job_satisfaction`
- 
-PC3 again by by by `distance_from_home` and `job_satisfaction`
-
-Since the first two components clearly loads on a different set of variables, this supports the case for keeping 2 components.
-
-**(e)** 
-
-```{r}
-#| eval: true
-df_pca <- as_tibble(pca_model$x[, 1:2])
-```
-
-**(f)** 
+**(d) Run K-means clustering on `df_scaled` using your chosen value of `k`.**
 
 ```{r}
 #| eval: true
 set.seed(123)
-kmeans_pca <- kmeans(df_pca, centers = 3, nstart = 10)
+
+kmeans_full <-
+  kmeans(
+    df_scaled,
+    centers = 4,
+    nstart = 10
+  )
 ```
 
-**(g)**
+**(e) Use the code below to visualise the clustering result.**
+
+Students should produce the cluster plot and use it as one input into interpretation, alongside the cluster summaries.
 
 ```{r}
 #| eval: true
-fviz_cluster(kmeans_pca, data = df_pca)
+fviz_cluster(
+  kmeans_full,
+  data = df_scaled,
+  ggtheme = theme_minimal(),
+  main = "5-variable K-means clustering"
+)
 ```
 
+**(f) What can this plot tell you about the clustering result? What can it not tell you on its own?**
 
-We find:
+The plot can give a broad sense of whether clusters appear reasonably separated, but it cannot fully describe the cluster profiles in a five-variable setting. For that, we still need summary statistics for each cluster.
 
-- The clusters are more clearly separated in PCA space
+**(g) Using `df_compare_full`, calculate the number of employees in each cluster, the attrition rate in each cluster, and the average value of each clustering variable in each cluster.**
 
-- There's less overlap than in the original 5D space
+Follow the same logic as in Exercise 5, using `group_by(cluster)` and `summarise()` to calculate cluster sizes, attrition rates, and means for the five variables.
 
-Interpretation:
-PCA helps reduce noise and overlapping signals, so the clusters become tighter and better defined. Especially when some variables were correlated, PCA unbundles that structure and makes segmentation easier.
+
+```{r}
+#| eval: true
+df_compare_full <-
+  df |>
+  select(
+    attrition,
+    job_satisfaction,
+    monthly_income,
+    years_at_company,
+    distance_from_home,
+    age
+  ) |>
+  mutate(cluster = as.factor(kmeans_full$cluster))
+
+df_compare_full |>
+  group_by(cluster) |>
+  summarise(
+    n_employees    = n(),
+    attrition_rate = mean(attrition == "Yes"),
+    job_sat        = mean(job_satisfaction),
+    income         = mean(monthly_income),
+    years          = mean(years_at_company),
+    distance       = mean(distance_from_home),
+    age            = mean(age)
+  )
+```
 
 :::
 
 :::
 
 :::
+
 <!-- END PROFILE:r-solutions -->

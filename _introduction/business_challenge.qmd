@@ -1,33 +1,35 @@
 ## The Business Challenge
 
-### The Topic: Why are employees leaving — and how can we group them to better understand attrition? {.unnumbered}
+### The Topic: Why are employees leaving, and can segmentation help us understand different attrition profiles? {.unnumbered}
 
-Every time an employee leaves, companies incur real costs. Thus, understanding **which types of employees are most at risk of leaving** is a key priority for HR analytics.
+Every time an employee leaves, companies incur real costs through recruitment, training, disruption to teams, and lost experience. For an HR analytics team, an important first step is to understand whether **different types of employees show different patterns of attrition**.
 
-In this tutorial, we’ll use clustering techniques to group employees based on their characteristics and see whether some groups are more likely to quit. This lets us move beyond individual-level predictors to identify broader patterns and profiles — a common strategy in **descriptive analytics**.
+In this tutorial, we use segmentation to explore that question. We begin with a simple **rule-of-thumb grouping** based on a small number of variables, and then compare it to **K-means clustering**, a more data-driven way of grouping employees with similar characteristics. This helps us move beyond one-off cases and identify broader employee profiles, which is a common task in **descriptive analytics**.
 
-We'll also introduce **Principal Component Analysis (PCA)** — a method for reducing complexity while keeping the structure of the data intact.
+Our goal is not to build a formal prediction model or identify the causes of attrition. Instead, the goal is to explore whether different segmentation approaches reveal useful patterns that an analytics team could investigate further.
 
-### The Data: HR Analytics Data on 1,470 Employees {.unnumbered}
+### The Data: HR Analytics Data {.unnumbered}
 
-We'll be working with an anonymized dataset from a fictional company’s HR department. It includes detailed information on 1,470 employees, including:
+We will work with an anonymised dataset from a company's HR department. It contains information on 1,470 employees, including:
 
-- **Personal characteristics**: `age`, `gender`, `marital_status`, `distance_from_home`
-- **Job-related features**: `job_satisfaction`, `monthly_income`, `years_at_company`, `department`
-- **Outcome**: `attrition` – whether the employee has left the company
+* **Personal characteristics**: `age`, `gender`, `marital_status`, `distance_from_home`
+* **Job-related features**: `job_satisfaction`, `monthly_income`, `years_at_company`, `department`
+* **Outcome**: `attrition` – whether the employee has left the company
 
-This gives us a rich set of variables to explore patterns in attrition and test whether employee segments differ in meaningful ways.
+This gives us a useful set of variables for exploring whether different employee groups differ in meaningful ways.
 
-### The Method: Clustering and PCA for Descriptive Segmentation {.unnumbered}
+### The Method: Rule-of-Thumb and K-Means Segmentation {.unnumbered}
 
-Our goal is to **segment employees** into groups with similar profiles — and examine whether some segments are more prone to attrition. To do this, we’ll:
+Our goal is to **segment employees** into groups with similar profiles and examine whether attrition differs across those groups. To do this, we will:
 
-1. **Prepare and normalize** the data so that all variables are on comparable scales  
-2. Use **K-means clustering** to group employees based on features like satisfaction, income, and commute distance  
-3. Use **PCA** to reduce the number of variables while preserving the main structure in the data  
-4. Interpret the resulting clusters — comparing their average characteristics and attrition rates
+1. create a simple rule-of-thumb segmentation using two variables
+2. compare it to K-means clustering on those same variables
+3. build a richer K-means model using five scaled numeric variables
+4. use the elbow method to help choose a reasonable number of clusters
+5. interpret the resulting clusters using their average characteristics and attrition rates
 
-We'll also explore how to choose the **right number of clusters**.
+This allows us to compare a simple hand-built segmentation to a richer data-driven one, and to ask whether the more flexible approach produces more useful insight.
+
 
 ### Loading the R packages and data
 

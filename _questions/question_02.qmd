@@ -1,35 +1,56 @@
 <!-- question-type: prepare -->
-### Exercise 2: Identifying Some Preliminary Patterns
+### Exercise 2: A Simple Rule-of-Thumb Employee Segmentation
 
-::: {.callout-warning collapse=true}
-### Why We're Not Giving You Template Code
+Suppose your analytics team wants to create a quick first-pass classification of employees using two variables:
 
-You've had plenty of practice with `dplyr` tools like `group_by()`, `summarise()`, and `mutate()`. This question is designed to help you build fluency in writing tidyverse code from scratch.
+* `job_satisfaction`
+* `distance_from_home`
 
-It's normal to feel unsure at first—but struggling a little helps solidify your skills. If you're stuck, re-use patterns from previous tutorials.
-:::
+For this exercise, define:
 
+* **lower satisfaction** as a score **below 2**
+* **longer commute** as living **10 km or more** from work
 
-Let's start exploring the dataset to identify patterns in attrition. 
-Our goal is to understand where attrition is most common and what kinds of employees are more likely to leave.
+This gives four possible employee groups:
 
-**(a)** What is the overall attrition rate in the dataset?
+* Higher satisfaction, shorter commute
+* Higher satisfaction, longer commute
+* Lower satisfaction, shorter commute
+* Lower satisfaction, longer commute
 
-**(b)** Which departments or job roles seem to have the highest attrition? Use proportions, not just counts.
+**(a)** Why might an analytics team begin with a simple rule-of-thumb segmentation before trying a more data-driven method?
 
-**(c)** How do the following characteristics differ between employees who left and those who stayed?
-Use averages to compare:
+**(b)** Complete the code below to classify each employee into one of the four segments.
 
-- Job satisfaction
-- Monthly income
-- Years at company
-- Distance from home
-- Age
+```{r}
+#| eval: false
+df_rule <- 
+  df |>
+  mutate(
+    rule_segment = case_when(
+      YOUR_CONDITION ~ "Higher satisfaction, shorter commute",
+      YOUR_CONDITION ~ "Higher satisfaction, longer commute",
+      YOUR_CONDITION ~ "Lower satisfaction, shorter commute",
+      .default = "Lower satisfaction, longer commute"
+    )
+  )
+```
 
-**(d)** Based on your findings, describe the typical profile of an employee who leaves. Are there any surprises?
+**(c)** For each segment, calculate:
 
+* the number of employees
+* the attrition rate
+
+```{r}
+# Write your answer here
+```
+
+**(d)** Which segment or segments appear to have the highest attrition?
+
+**(e)** What are the advantages of this rule-of-thumb approach for an analytics team? What kinds of patterns might it fail to capture?
 
 <!-- BEGIN PROFILE:r-teaching-guide -->
+
 ::: {.content-visible when-profile="r-teaching-guide"}
 
 ::: {.teaching-block}
@@ -40,44 +61,46 @@ Teaching Note
 
 ::: {.teaching-block-body}
 
-🎯 **Learning Objective** 
+🎯 **Learning Objective**
+
 Students should:
 
-- Apply grouped summarisation to examine attrition patterns across categories.
-- Use pivot_wider() to restructure data for clearer comparison.
-- Interpret proportions and identify roles with high attrition rates.
+* Build a simple rule-based employee segmentation using fixed thresholds.
+* Interpret differences in attrition across segments.
+* Recognize the strengths and limitations of hand-built segmentation rules.
 
 ✅   **Core Concepts to Highlight**
 
-- Relative vs absolute comparisons: Why proportions (shares) are often more insightful than raw counts.
-- Data reshaping: Using `pivot_wider()` to improve readability and enable side-by-side comparisons.
-- Sorting by relevance: How `arrange()` can surface the most important categories (e.g. high attrition)
-
+* Segmentation as a way of grouping observations into meaningful categories
+* Rule-of-thumb segmentation as simple, transparent, and easy to communicate
+* Fixed thresholds as analyst choices that shape the resulting groups
+* Attrition rate as a useful summary for comparing segments
+* The idea that simple rules can be useful, but may miss more complex patterns in the data
 
 💬 **Suggested In-Class Prompts** (if needed)
 
-“Which job roles have the highest proportion of attrition?”
-
-“Why might it be misleading to just use counts (n) instead of proportions?”
-
-“If we wanted to visualise this, what type of chart would help?”
-
-“Why is it important to compare within group (e.g., share of leavers among each role) rather than across the whole company?”
+* “Why might a team start with a simple segmentation rule before trying something more data-driven?”
+* “What do we gain by using thresholds that are easy to explain?”
+* “What might this rule-based approach miss about employee differences?”
+* “If two segments have similar attrition rates, does that mean they are really the same kind of employee?”
 
 📌 **Common Misunderstandings**
 
-- Sorting by `n` instead of `share`: Students often default to sorting by total count, missing the within-group interpretation.
-- Confusing base rates: Some students assume high total attrition count = high attrition rate, without considering role size.
-- Zero values: Forgetting `values_fill = 0` may lead to NA values which confuse students when interpreting results.
+* Thinking the chosen cutoffs are objectively correct rather than simple analyst-made rules
+* Assuming a clear rule-based segmentation must capture all important patterns
+* Treating groups with similar attrition as identical, even if they differ on underlying characteristics
+* Forgetting to use proportions rather than only counts when comparing attrition across groups
 
 :::
 
 :::
 
 :::
+
 <!-- END PROFILE:r-teaching-guide -->
 
 <!-- BEGIN PROFILE:r-solutions -->
+
 ::: {.content-visible when-profile="r-solutions" when-profile="r-teaching-guide"}
 
 ::: {.solution-block}
@@ -88,72 +111,55 @@ Solution
 
 ::: {.solution-block-body}
 
-**(a)**
+**(a) Why might an analytics team begin with a simple rule-of-thumb segmentation before trying a more data-driven method?**
+
+* **Easy to understand**: Simple rules are transparent and easy to explain to others.
+* **Fast to implement**: Analysts can create an initial segmentation quickly.
+* **Useful benchmark**: A hand-built rule gives a baseline that can later be compared to more data-driven methods.
+* **Business intuition**: The chosen variables may reflect concerns that managers already care about.
+
+**(b) Complete the code below to classify each employee into one of the four segments.**
 
 ```{r}
-df |> 
-  group_by(attrition) |>
-  summarise(n = n(), .groups = "drop") |> 
-  mutate(share = n / sum(n))
-```
-
-
-**(b)**
-
-```{r}
-df |> 
-  group_by(department, attrition) |>
-  summarise(n = n(), .groups = "drop") |> 
-  mutate(share = n / sum(n))
-```
-
-AND 
-
-```{r}
-df |> 
-  group_by(job_role, attrition) |> 
-  summarise(n = n(), .groups = "drop") |> 
-  mutate(share = n / sum(n)) |> 
-  pivot_wider(
-    names_from = attrition,
-    values_from = share,
-    values_fill = 0
-  ) |> 
-    arrange(desc(Yes))
-```
-
-
-**(c)**
-
-```{r}
-#REMARK: across with an anonymous function is new. its faster to write
-# feel free to do it the manual way if more comfortable
-df |> 
-  group_by(attrition) |> 
-  summarise(
-    across(
-      c(job_satisfaction, monthly_income, years_at_company, distance_from_home, age),
-      \(x) mean(x, na.rm = TRUE)
-    ),
-    .groups = "drop"
+#| eval: false
+df_rule <- 
+  df |>
+  mutate(
+    rule_segment = case_when(
+      job_satisfaction >= 2 & distance_from_home < 10 ~ "Higher satisfaction, shorter commute",
+      job_satisfaction >= 2 & distance_from_home >= 10 ~ "Higher satisfaction, longer commute",
+      job_satisfaction < 2 & distance_from_home < 10 ~ "Lower satisfaction, shorter commute",
+      .default = "Lower satisfaction, longer commute"
+    )
   )
 ```
 
+**(c) For each segment, calculate the number of employees and the attrition rate.**
 
-**(d)**
+```{r}
+#| eval: false
+df_rule |>
+  group_by(rule_segment) |>
+  summarise(
+    n_employees = n(),
+    attrition_rate = mean(attrition == "Yes")
+  )
+```
 
-Employees who leave the company tend to:
+**(d) Which segment or segments appear to have the highest attrition?**
 
-- Have lower job satisfaction
-- Be paid less
-- Have fewer years at the company
-- Live further from the office
-- Be slightly younger
-- Be in Sales or more junior Research roles
+A strong answer should identify the segment or segments with the highest attrition rate based on the summary table, rather than relying on counts alone.
+
+**(e) What are the advantages of this rule-of-thumb approach for an analytics team? What kinds of patterns might it fail to capture?**
+
+* **Advantages**: The approach is simple, transparent, quick to implement, and easy to communicate.
+* **What it might miss**: It depends heavily on the chosen thresholds, may ignore more subtle combinations of variables, and may fail to capture patterns that are not well described by simple cutoffs.
+* **Big picture**: This is useful as a first-pass segmentation, but it may be cruder than a more data-driven clustering approach.
 
 :::
 
 :::
 
 :::
+
 <!-- END PROFILE:r-solutions -->
