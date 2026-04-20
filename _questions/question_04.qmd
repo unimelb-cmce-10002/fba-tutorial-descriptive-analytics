@@ -1,71 +1,71 @@
-<!-- question-type: prepare -->
-### Exercise 4: First Steps with K-Means Clustering
+<!-- question-type: in-class -->
+### Exercise 4: Preparing the Data for K-Means Clustering
 
-You've prepared a numeric dataset of employee features — now let’s try to find **natural groupings** among employees using **K-means clustering**.
+In the remaining exercises, we will use the following five numeric variables to build and compare K-means clustering models:
 
-**(a)** What do you think K-means clustering tries to do?  
-Try to explain it in your own words — no need to be technical yet.  
+* `job_satisfaction`
+* `monthly_income`
+* `years_at_company`
+* `distance_from_home`
+* `age`
 
-*Hint: Think about what it means for observations to be “similar” and how K-means might group them.*
+In this exercise, we prepare these five variables for the clustering analysis that follows.
 
-**(b)** Complete the code below to run K-means clustering on your `df_scaled` data, asking for 3 clusters.  
-We've asked the function to use 10 random starting points (`nstart = 10`) to improve stability, and set a seed for reproducibility.
+**(a)** Create a dataset that contains the five variables listed above.
 
 ```{r}
 #| eval: false
-set.seed(123)  
-
-kmeans_model <- 
-    YOUR_CODE(YOUR_DATA, 
-           centers = YOUR_NUMBER, 
-           nstart = 10
-           )
+df_kmeans <- 
+  df |>
+  select(
+    job_satisfaction,
+    monthly_income,
+    years_at_company,
+    YOUR_CODE,
+    YOUR_CODE
+  )
 ```
 
-**(c)** Complete the code below to visualise the clusters.
+**(b)** Complete the code below to create a recipe for `df_kmeans` and add a step that normalises all numeric predictors.
 
 ```{r}
 #| eval: false
-fviz_cluster(
-  YOUR_MODEL,
-  data = YOUR_DATA,
-  palette = c("#00AFBB", "#2E9FDF", "#E7B800"),
-  ggtheme = theme_minimal(),
-  main = "K-means Clustering Results"
-)
+rec <- 
+  YOUR_CODE(~ ., data = df_kmeans) |>
+  YOUR_CODE(all_numeric_predictors())
 ```
 
-**(d)** Interpret the plot.
-Do the clusters look well-separated? 
+**(c)** Explain what the code in part (b) is doing.
 
-**(e)** Which variables might be driving the clustering? Complete the code below.
+**(d)** Complete the code below to implement the preprocessing steps from the recipe in part (b) and apply them to the data.
 
 ```{r}
 #| eval: false
-# include variables we want to keep from our analysis and attrition
-df_clustered <- 
-    df |> 
-    select(YOUR_VARIABLES)
+df_scaled_5 <- 
+  rec |>
+  YOUR_CODE() |>
+  YOUR_CODE(new_data = NULL)
+```
 
-# add the cluster assignment to the data
-df_clustered <- 
-    augment(kmeans_model, df_clustered)
+**(e)** Explain what the two functions you used in part (d) are doing.
 
-# Now some summary statistics grouping by cluster
-df_clustered |>
-    group_by(YOUR_VARIABLE) |>
-    summarise(across(job_satisfaction:age, mean))
+**(f)** Run the code below to verify that the preprocessing achieves the desired result. What do you notice about the means and standard deviations?
 
-df_clustered |>
-    group_by(YOUR_VARIABLE) |>
-    summarise(
-        count = n(),
-        attrition_rate = mean(attrition == "Yes")
+```{r}
+#| eval: false
+df_scaled |>
+  summarise(
+    across(
+      everything(),
+      list(mean = mean, sd = sd)
     )
+  )
 ```
 
+*Write your answer here.*
 
 <!-- BEGIN PROFILE:r-teaching-guide -->
+
 ::: {.content-visible when-profile="r-teaching-guide"}
 
 ::: {.teaching-block}
@@ -76,47 +76,47 @@ Teaching Note
 
 ::: {.teaching-block-body}
 
-🎯 **Learning Objective** 
+🎯 **Learning Objective**
+
 Students should:
 
-- Understand the basic intuition behind K-means clustering.
-- Apply K-means clustering in R using pre-processed data.
-- Visualize and interpret cluster output.
-- Relate cluster membership back to original business features, including attrition.
+* Prepare a numeric dataset for K-means clustering using a simple `recipes` workflow.
+* Explain in plain language what `recipe()`, `step_normalize()`, `prep()`, and `bake()` are doing.
+* Verify that preprocessing produced the intended result.
 
 ✅   **Core Concepts to Highlight**
 
-
-- K-means mechanics: Iterative partitioning based on distance to centroids.
-- Why set a seed: Ensures reproducibility due to randomness in initialization.
-- Cluster interpretation: Use group means and visualizations to infer meaning.
-- Link to business: Clusters may indicate meaningful employee profiles (e.g. high attrition vs. low attrition groups).
-
+* The five numeric variables prepared here will be used in the remaining clustering exercises.
+* `recipe()` defines a preprocessing plan.
+* `step_normalize()` adds a step that rescales numeric predictors onto a comparable scale.
+* `prep()` learns what is needed to carry out the preprocessing steps.
+* `bake()` applies those steps and returns the processed data.
+* Good analytics practice includes checking whether preprocessing actually worked.
 
 💬 **Suggested In-Class Prompts** (if needed)
 
-“What would make two employees ‘similar’ in this dataset?”
-
-“What’s a potential risk of clustering without scaling?”
-
-“Why might the clusters not be cleanly separated?”
-
-“Does clustering explain attrition, or just reveal patterns?”
+* “Why are we setting up the five-variable dataset now rather than rebuilding it in each later exercise?”
+* “What is the difference between defining a preprocessing plan and actually carrying it out?”
+* “Why might it be useful to separate `prep()` from `bake()` in a data workflow?”
+* “After scaling, what should we expect the means and standard deviations to look like?”
 
 📌 **Common Misunderstandings**
 
-- Assuming clustering is prediction: Students may confuse clustering with supervised learning.
-- Overinterpreting clusters: Clusters may not map cleanly onto real-world categories.
-- Believing K-means is deterministic: It’s not — hence the need for `set.seed()` and `nstart`.
+* Thinking `recipe()` changes the data immediately, when it only defines the preprocessing plan
+* Thinking `step_normalize()` runs by itself, when it only adds a step to the plan
+* Treating `prep()` and `bake()` as interchangeable, rather than as learning and applying stages
+* Forgetting that the final summary check is there to confirm the preprocessing worked as intended
 
 :::
 
 :::
 
 :::
+
 <!-- END PROFILE:r-teaching-guide -->
 
 <!-- BEGIN PROFILE:r-solutions -->
+
 ::: {.content-visible when-profile="r-solutions" when-profile="r-teaching-guide"}
 
 ::: {.solution-block}
@@ -127,67 +127,67 @@ Solution
 
 ::: {.solution-block-body}
 
-**(a)**
+**(a) The code below creates a smaller dataset containing only the five variables we will use. Complete the `select()` step.**
 
-K-means clustering groups observations into K clusters such that observations within the same cluster are more similar to each other than to those in other clusters. It does this by:
-
-* Randomly assigning K cluster centers,
-* Assigning each observation to the nearest cluster center,
-* Recalculating cluster centers as the mean of assigned points,
-* Repeating until assignments stabilize.
-
-It's an unsupervised learning method that tries to find natural groupings in data.
-
-**(b)**
 ```{r}
-set.seed(123)  # ✅ ensures reproducibility
-kmeans_model <- kmeans(df_scaled, centers = 3, nstart = 10)
+#| eval: true
+df_kmeans <- 
+  df |>
+  select(
+    job_satisfaction,
+    monthly_income,
+    years_at_company,
+    distance_from_home,
+    age
+  )
 ```
 
-**(c)**
-```{r}
-fviz_cluster(
-  kmeans_model,
-  data = df_scaled,
-  palette = c("#00AFBB", "#2E9FDF", "#E7B800"),
-  ggtheme = theme_minimal(),
-  main = "K-means Clustering Results"
-)
+**(b) Complete the code below to create a recipe for `df_kmeans` and add a step that normalises all numeric predictors.**
 
-##
-ggsave("_figs/ex_4c.png")
+```{r}
+#| eval: true
+rec <- 
+  recipe(~ ., data = df_kmeans) |>
+  step_normalize(all_numeric_predictors())
 ```
-**(d)**
-Cluster 2 looks well separated, lots of overlap between clusters 1 and 3.
 
-**(e)**
+**(c) Explain in plain language what the code in part (b) is doing.**
 
-Cluster 1 and 3 similar except for avg job satisfaction.
+This code creates a preprocessing plan for the variables in `df_kmeans` and adds a step that will normalise all numeric predictors so they are on a comparable scale.
+
+**(d) Complete the code below to implement the preprocessing steps from the recipe in part (b) and apply them to the data.**
 
 ```{r}
-# Some example code. No means the best.
-df_clustered <- 
-  df |> 
-  select(job_satisfaction, monthly_income, years_at_company, distance_from_home, age, attrition)
+#| eval: true
+df_scaled <- 
+  rec |>
+  prep() |>
+  bake(new_data = NULL)
+```
 
-df_clustered <- augment(kmeans_model, df_clustered)
+**(e) Explain in plain language what the two functions you used in part (d) are doing.**
 
-df_clustered |>
-    group_by(.cluster) |>
-    summarise(across(job_satisfaction:age, mean))
+`prep()` works out what is needed to carry out the preprocessing steps in the recipe. In this case, it calculates the information needed to normalise each variable. `bake(new_data = NULL)` then applies those prepared steps to the data and returns the processed dataset.
 
-df_clustered |>
-    group_by(.cluster) |>
-    summarise(
-        count = n(),
-        attrition_rate = mean(attrition == "Yes")
+**(f) Run the code below to verify that the preprocessing achieves the desired result. What do you notice about the means and standard deviations?**
+
+The means are now close to 0 and the standard deviations are close to 1 for each variable. This indicates that the variables have been normalised successfully.
+
+```{r}
+#| eval: true
+df_scaled |>
+  summarise(
+    across(
+      everything(),
+      list(mean = mean, sd = sd)
     )
+  )
 ```
 
-
 :::
 
 :::
 
 :::
+
 <!-- END PROFILE:r-solutions -->

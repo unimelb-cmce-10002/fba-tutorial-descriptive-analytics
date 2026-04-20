@@ -8,9 +8,10 @@ While some turnover is normal, high attrition can signal deeper issues.
 
 **(b)** What might cause employees to leave?
 
-**(c)** Why would a company want to predict or understand patterns in attrition?
+**(c)** Why might an analytics team want to group employees into segments when studying attrition, rather than looking only at employees one by one?
 
 <!-- BEGIN PROFILE:r-teaching-guide -->
+
 ::: {.content-visible when-profile="r-teaching-guide"}
 
 ::: {.teaching-block}
@@ -21,42 +22,44 @@ Teaching Note
 
 ::: {.teaching-block-body}
 
-🎯 **Learning Objective** 
+🎯 **Learning Objective**
+
 Students should:
 
-- Understand the concept of employee attrition and its business implications.
-- Reflect on potential drivers of employee turnover.
-- Recognize the importance of analyzing and predicting attrition patterns in organizations.
-
+* Understand the concept of employee attrition and its business implications.
+* Reflect on possible drivers of employee turnover.
+* Recognize why grouping employees into segments may help an analytics team better understand attrition patterns.
 
 ✅   **Core Concepts to Highlight**
 
-- Definition of employee attrition (vs. layoffs or short-term leave)
-- Business impacts of high attrition (costs, morale, performance)
-- Common causes of attrition (e.g., dissatisfaction, distance, low pay)
-- Strategic value of predicting attrition
-
+* Definition of employee attrition
+* Business impacts of high attrition, including costs, disruption, morale, and loss of firm-specific knowledge
+* Common causes of attrition, such as dissatisfaction, limited advancement, management fit, pay, or commute burden
+* Segmentation as a descriptive analytics tool for identifying broader employee profiles
 
 💬 **Suggested In-Class Prompts** (if needed)
 
-- “What kinds of businesses might be *especially* vulnerable to high attrition?”
-- “Have you seen any companies take steps to reduce turnover?”
-- “How might understanding attrition help in designing better workplaces?”
+* “What kinds of costs might a firm face when experienced employees leave?”
+* “Could two employees both leave for very different reasons?”
+* “Why might an analytics team learn more from studying groups of employees rather than only individual cases?”
 
 📌 **Common Misunderstandings**
 
-- Assuming all attrition is bad — sometimes it's a natural or even healthy process
-- Focusing only on pay as a driver of attrition, ignoring other work and personal environment factors
-- Thinking prediction is only useful for HR, not realizing its value for strategy and operations
+* Assuming all attrition is bad, when some turnover is normal or even healthy
+* Focusing only on pay as a cause of attrition and ignoring workplace or personal context
+* Thinking segmentation is only a marketing idea rather than a broader analytics tool
+* Jumping straight to prediction, when this tutorial is first about understanding patterns
 
 :::
 
 :::
 
 :::
+
 <!-- END PROFILE:r-teaching-guide -->
 
 <!-- BEGIN PROFILE:r-solutions -->
+
 ::: {.content-visible when-profile="r-solutions" when-profile="r-teaching-guide"}
 
 ::: {.solution-block}
@@ -69,30 +72,31 @@ Solution
 
 **(a) What kinds of consequences might high attrition have for a business?**
 
-- **Increased costs**: Hiring and training new employees is expensive.
-- **Loss of knowledge**: Experienced employees take valuable knowledge with them.
-- **Disruption to teams**: Team cohesion, workflows, and morale can be negatively affected.
-- **Reduced productivity**: New hires may take time to reach full effectiveness.
-- **Brand/reputation risks**: High attrition can signal a poor work environment, deterring future applicants.
+* **Increased costs**: Hiring and training new employees takes time and money.
+* **Loss of knowledge**: Experienced employees may take valuable firm-specific knowledge with them.
+* **Disruption to teams**: Turnover can interrupt workflows and reduce team stability.
+* **Reduced productivity**: New hires may need time to become fully effective.
+* **Morale and reputation effects**: High attrition can lower morale and may signal a poor work environment.
 
-**(b) What might cause employees to leave?**
+**(b) What are some possible reasons employees might leave?**
 
-- **Job dissatisfaction**: Poor management, lack of growth, or a toxic culture.
-- **Low compensation**: Employees may leave for better pay or benefits.
-- **Commute or location issues**: Long travel distances or relocations.
-- **Personal reasons**: Family needs, health, career changes.
-- **Lack of advancement opportunities**: Employees may feel stuck or underutilized.
+* **Job dissatisfaction**: Employees may be unhappy with their role, workload, manager, or workplace culture.
+* **Limited growth opportunities**: Some employees may leave if they feel stuck or underutilized.
+* **Compensation and benefits**: Employees may move for better pay or conditions elsewhere.
+* **Commute or location issues**: Long travel times may make a job less sustainable.
+* **Personal reasons**: Family needs, health, or career changes may also matter.
 
-**(c) Why would a company want to predict or understand patterns in attrition?**
+**(c) Why might an analytics team want to group employees into segments when studying attrition, rather than looking only at employees one by one?**
 
-- **Targeted retention strategies**: Identifying at-risk groups allows for proactive HR interventions.
-- **Workforce planning**: Helps forecast staffing needs and budget for recruitment/training.
-- **Improving employee experience**: Insights can guide workplace improvements.
-- **Reducing turnover costs**: Early warnings reduce the cost of attrition by improving retention.
-
-:::
+* **Pattern finding**: Segments can reveal broader employee profiles with different attrition patterns.
+* **Clearer interpretation**: Grouping can make it easier to describe which types of employees are more likely to leave.
+* **Better actionability**: Firms may be able to design different retention responses for different employee groups.
+* **Descriptive insight before prediction**: Segmentation helps analysts understand the structure of the workforce before moving to more formal predictive tools.
 
 :::
 
 :::
+
+:::
+
 <!-- END PROFILE:r-solutions -->

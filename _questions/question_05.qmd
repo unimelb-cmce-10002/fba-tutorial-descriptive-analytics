@@ -1,75 +1,71 @@
 <!-- question-type: inclass -->
-### Exercise 5: How many clusters should we use?
+### Exercise 5: Comparing Rule-of-Thumb Segmentation to K-Means
 
-Clustering requires us to pick a value for `k` — the number of clusters. But how do we decide what’s best?
+In Exercise 2, you created four employee groups using simple rules based on `job_satisfaction` and `distance_from_home`.
 
-There are several methods we can use. Each has a different way of deciding whether the clusters are "tight" and "well separated."
+Now we will use **K-means clustering** on those same two variables and compare the result.
 
-**(a)** What do you think could go wrong if we choose too few or too many clusters?
+**(a)** Create a new dataset called `df_scaled_small` that keeps only the scaled versions of:
 
-**(b)** One common approach we encountered in the lecture is the **elbow method**.  
-What is the elbow method trying to do, in plain language?
+* `job_satisfaction`
+* `distance_from_home`
 
-**(c)** Run the code below and look at the plot.  
-Where do you see a clear "elbow" or bend in the curve?  
-Based on the plot, what value of `k` would you choose?
+from `df_scaled`.
 
 ```{r}
 #| eval: false
-fviz_nbclust(
-  df_scaled, 
-  kmeans,
-  method = "wss",     # Within-cluster sum of squares
-  k.max = 10,
-  nstart = 10
-)
+df_scaled_small <-
+  df_scaled |>
+  select(YOUR_CODE, YOUR_CODE)
 ```
 
-**(d)** One alternative to the elbow method is the silhouette method which looks at how well each point fits within its cluster vs. other clusters.
-Run the code below and report which value of `k` this method prefers.
-
-```{r}
-#| eval: false
-fviz_nbclust(
-  df_scaled, 
-  kmeans,
-  method = "silhouette"
-)
-```
-
-**(e)** Another alternative to the elbow method is the gap statistic which compares your clustering to what you’d expect from random data.
-Run the code below and report which value of `k` this method prefers.
-
-```{r}
-#| eval: false
-fviz_nbclust(
-  df_scaled,
-  kmeans,
-  method = "gap_stat",
-  nstart = 25,
-  iter.max = 50
-)
-```
-
-**(f)** Do all three methods agree on the best value of k? If not, how would you decide?
-
-**(g)** Based on your answer, pick a value for k, rerun the kmeans() function, and briefly describe the new clustering results.
+**(b)** Run K-means clustering on `df_scaled_small` using **4 clusters**.
 
 ```{r}
 #| eval: false
 set.seed(123)
-kmeans_model <- kmeans(df_scaled, centers = YOUR_CHOICE, nstart = 10)
 
+kmeans_small <-
+  kmeans(
+    YOUR_CODE,
+    centers = YOUR_CODE,
+    nstart = 10
+  )
+```
+
+**(c)** Use the code below to visualise the clustering result.
+
+```{r}
+#| eval: false
 fviz_cluster(
-  kmeans_model,
-  data = df_scaled,
-  palette = "jco",
-  ggtheme = theme_minimal()
+  kmeans_small,
+  data = df_scaled_small,
+  ggtheme = theme_minimal(),
+  main = "2-variable K-means clustering"
 )
 ```
 
+**(d)** What do you notice about the shape of the clusters? Do they look very different from the rule-of-thumb groups in Exercise 2?
+
+**(e)** The code below combines the original employee data with the K-means cluster assignments.
+
+Using `df_compare`, calculate the number of employees and the attrition rate in each cluster.
+
+```{r}
+#| eval: false
+df_compare <-
+  df |>
+  select(attrition, job_satisfaction, distance_from_home) |>
+  mutate(cluster = as.factor(kmeans_small$cluster))
+
+df_compare |>
+  YOUR_CODE_HERE
+```
+
+**(f)** Compared with the rule-of-thumb segmentation, did K-means appear to add much in this two-variable setting? Explain briefly.
 
 <!-- BEGIN PROFILE:r-teaching-guide -->
+
 ::: {.content-visible when-profile="r-teaching-guide"}
 
 ::: {.teaching-block}
@@ -80,52 +76,47 @@ Teaching Note
 
 ::: {.teaching-block-body}
 
-🎯 **Learning Objective** 
+🎯 **Learning Objective**
+
 Students should:
 
-- Understand the importance of selecting an appropriate number of clusters in K-means.
-- Explain in plain language how common methods for choosing k (elbow, silhouette, gap statistic) work.
-- Apply each method in R and interpret the outputs.
-- Make a justified choice of k based on multiple criteria.
+* Run K-means clustering on a simple two-variable dataset.
+* Compare a data-driven clustering result to a hand-built rule-of-thumb segmentation.
+* Summarise cluster sizes and attrition rates using grouped summaries.
+* Reflect on whether K-means adds meaningful insight in a simple low-dimensional setting.
 
 ✅   **Core Concepts to Highlight**
 
-- K-means clustering requires a user-specified number of clusters (k).
-- Within-Cluster Sum of Squares (WSS) as a measure of compactness.
-- Elbow method: diminishing returns in WSS reduction.
-- Silhouette method: cohesion vs. separation.
-- Gap statistic: comparison to a reference distribution.
-- Model selection trade-offs: interpretability, stability, business relevance.
-
+* K-means can be run on the same two variables used in the earlier rule-based segmentation.
+* Setting `centers = 4` makes the comparison to the four rule-based groups especially direct.
+* In a simple two-variable setting, K-means may produce clusters that look quite similar to hand-built buckets.
+* The value of K-means is not automatic; whether it adds insight depends on the data and the problem.
+* Cluster summaries should be interpreted using proportions such as attrition rates, not counts alone.
 
 💬 **Suggested In-Class Prompts** (if needed)
 
-“Can someone explain what the elbow method is trying to find, without using the word ‘elbow’?”
-
-“Why might different methods recommend different values for k? What does that tell us?”
-
-“Suppose silhouette says 2 but elbow and gap say 3 — what would you choose, and why?”
-
-“Does your chosen number of clusters make sense in business terms?”
+* “Why might we deliberately use the same two variables here as in Exercise 2?”
+* “Does the clustering plot suggest something meaningfully different from the simple four-group rule?”
+* “If K-means looks similar to the rule-based segmentation here, is that a problem?”
+* “What do the attrition rates tell us that the plot alone does not?”
 
 📌 **Common Misunderstandings**
 
-"Always choose the number with lowest WSS" – forgetting that WSS always drops with higher k.
-
-Thinking the goal is to make all clusters the same size – remind them that’s not required.
-
-Treating method output as absolute truth – emphasize judgment and context.
-
-Not rerunning kmeans() after choosing k – they need to redo clustering using their chosen value.
+* Assuming K-means must always outperform a simple hand-built segmentation
+* Treating the visual cluster plot as sufficient without checking cluster summaries
+* Focusing only on cluster size and forgetting to compare attrition rates
+* Thinking similarity between the rule-based groups and K-means means the algorithm failed, when it may simply indicate that the simple structure was already capturing the main pattern
 
 :::
 
 :::
 
 :::
+
 <!-- END PROFILE:r-teaching-guide -->
 
 <!-- BEGIN PROFILE:r-solutions -->
+
 ::: {.content-visible when-profile="r-solutions" when-profile="r-teaching-guide"}
 
 ::: {.solution-block}
@@ -136,104 +127,76 @@ Solution
 
 ::: {.solution-block-body}
 
-### (a) What could go wrong with too few or too many clusters?
-
-- **Too few clusters**: We may group together employees who are actually quite different. This hides useful variation and makes it hard to take targeted action.
-- **Too many clusters**: We might split up natural groupings and end up with tiny, unstable segments that are hard to interpret or act on.
-
-
-**(b)** What is the elbow method doing, in plain language?
-
-- The elbow method looks at how much **within-cluster variation** (WSS) drops as we increase `k`.
-- As we increase `k`, WSS will naturally decrease — but after a point, the **improvement slows down**.
-- The "elbow" is the value of `k` where the rate of improvement flattens — indicating that adding more clusters doesn’t improve fit by much.
-
-
-**(c)** What value of `k` would you choose based on the elbow plot?
+**(a) Create a new dataset called `df_scaled_small` that keeps only the scaled versions of `job_satisfaction` and `distance_from_home` from `df_scaled`.**
 
 ```{r}
 #| eval: true
-
-# remark: scaled data is stored in data, you can load it as
-# df_scaled <- 
-#   read_csv("data/hr_attrition_scaled.csv")
-
-fviz_nbclust(
-  df_scaled, 
-  kmeans,
-  method = "wss",     # Within-cluster sum of squares
-  k.max = 10,
-  nstart = 10
-)
+df_scaled_small <-
+  df_scaled |>
+  select(job_satisfaction, distance_from_home)
 ```
 
-Students might give slightly different answers, but **common responses** include:
-
-- If there’s a decrease in steepening around `k = 2` or `k = 3`, this is often a good choice.
-- Encourage students to **justify** their answer
-
-**(d)**
+**(b) Run K-means clustering on `df_scaled_small` using 4 clusters.**
 
 ```{r}
 #| eval: true
-fviz_nbclust(
-  df_scaled, 
-  kmeans,
-  method = "silhouette"
-)
-```
-
-2 clusters.
-
-- Students should read this directly from the **peak** of the silhouette plot.
-- Remind them that **higher silhouette values** mean **tighter and more distinct** clusters.
-
-**(e)**
-
-```{r}
-#| eval: false
-fviz_nbclust(
-  df_scaled,
-  kmeans,
-  method = "gap_stat",
-  # nstart of 25 stops the warning methods appearing for no gains
-  nstart = 25,
-  iter.max = 50
-)
-```
-
-- The **gap statistic** chooses the `k` where the gap between real and random data is largest.
-- This is  shown with **a bar or point marker** on the plot.
-- Common answer: in this example 1.
-
-**(f)**
-
-- Elbow suggest **k = 2 or 3**
-- Silhouette prefers **k =  2**
-- Gap statistic suggest **k = 1**
-- Students should reflect critically. For instance:
-  - "If both silhouette and gap agree on 3, but elbow suggests 1, I might choose 2."
-  - "If k = 3 produces more interpretable clusters, that's also a good reason to choose it."
-
-**(g)**
-
-```{r}
 set.seed(123)
-kmeans_model <- kmeans(df_scaled, centers = 2, nstart = 10)
 
-fviz_cluster(
-  kmeans_model,
-  data = df_scaled,
-  palette = "jco",
-  ggtheme = theme_minimal()
-)
-
-# if you have time, add these clusters back to the data and look at what they identify (tho one can infer this from Q4)
+kmeans_small <-
+  kmeans(
+    df_scaled_small,
+    centers = 4,
+    nstart = 10
+  )
 ```
 
-:::
+**(c) Use the code below to visualise the clustering result.**
+
+```{r}
+#| eval: true
+fviz_cluster(
+  kmeans_small,
+  data = df_scaled_small,
+  ggtheme = theme_minimal(),
+  main = "2-variable K-means clustering"
+)
+```
+
+**(d) What do you notice about the shape of the clusters? Do they look very different from the rule-of-thumb groups in Exercise 2?**
+
+A strong answer should note that the clusters may look fairly similar to the earlier four-group rule-based segmentation. In a simple two-variable setting, K-means may not add dramatically different structure.
+
+**(e) Using `df_compare`, calculate the number of employees and the attrition rate in each cluster.**
+
+```{r}
+#| eval: true
+df_compare <-
+  df |>
+  select(attrition, job_satisfaction, distance_from_home) |>
+  mutate(cluster = as.factor(kmeans_small$cluster))
+
+df_compare |>
+  group_by(cluster) |>
+  summarise(
+    n_employees    = n(),
+    attrition_rate = mean(attrition == "Yes"),
+    job_sat        = mean(job_satisfaction),
+    distance       = mean(distance_from_home)
+  )
+```
+
+**(f) Compared with the rule-of-thumb segmentation, did K-means appear to add much in this two-variable setting? Explain briefly.**
+
+The four clusters line up closely with the four combinations of lower versus higher job satisfaction and shorter versus longer commute distance. For example, clusters 1 and 2 both have lower average job satisfaction, while clusters 3 and 4 both have higher average job satisfaction. Clusters 2 and 3 both have longer average commute distances, while clusters 1 and 4 have shorter average commute distances.
+
+The attrition rates also follow a familiar pattern. The highest attrition appears in the cluster with lower satisfaction and longer commute (cluster 2), while the lowest attrition appears in the cluster with higher satisfaction and shorter commute (cluster 4). The other two clusters sit in between. This suggests that in a two-variable setting, K-means may not add dramatically different insight beyond what a transparent rule-of-thumb segmentation already captured.
+
+That does not mean K-means is useless. Rather, it shows that when the structure is simple and the variables are few, a hand-built segmentation can already do a reasonable job of describing the main pattern in the data.
 
 :::
 
 :::
+
+:::
+
 <!-- END PROFILE:r-solutions -->

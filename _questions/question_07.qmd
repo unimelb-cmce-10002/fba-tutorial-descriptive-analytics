@@ -1,133 +1,65 @@
 <!-- question-type: inclass -->
-### [Advanced, Optional] Exercise 7: Segmenting with All Variables
+### Exercise 7: Communicating Your Results in an Analytics Team Memo
 
-::: {.callout-warning collapse=true}
-## Only complete if > 40 mins left in the tutorial!
+You have now explored three ways to segment employees:
 
-This exercise takes a while to complete. If there is less than 40 mins to go in class, skip this exercise and proceed to Exercise 8.
-Solutions will be posted after the tutorial.
+* a simple **rule-of-thumb segmentation**
+* a **2-variable K-means model**
+* a richer **5-variable K-means model**
+
+Your task is to write a short memo for an **analytics team meeting**. The goal is to help the team decide which approach produced the most useful insight into employee attrition patterns.
+
+::: {.callout-tip collapse=true}
+
+## Writing Hints
+
+* Use the **"Write Like an Amazonian"** tips to guide your writing.
+* A strong memo should **compare the approaches**, not just describe the final one.
+* Focus on the **analytical takeaway**: what did each method reveal, and what did the richer model add?
+* Keep the writing clear and direct. Do not simply restate the code you ran.
+
 :::
 
-::: {.callout-warning collapse=true}
-## What comes next is tough!
+::: {.callout-note collapse=true}
 
-In the exercises that follow, you’ll walk through how to do K-means clustering using **both numeric and categorical features**, with **dimensionality reduction via Principal Component Analysis (PCA)**.
+## Suggested Memo Structure
 
-This is advanced content — we don’t expect you to write this code on your own nor will a detailed example such as this be expected in an assessment situation.
-We want to show you what **is** possible building off the skills you have acquired above.
-Follow along with your tutor and focus on building intuition for:
+Use the outline below and provide **2–3 bullet points under each subheading**.
 
-- What each step does
-- Why we need it
-- How it connects to what you’ve learned so far
+**Problem Statement**
+*(1 short paragraph summarising why the team is segmenting employees and what business problem this analysis is trying to address)*
 
-Exercises after the data prepation will feel very familiar — only the somewhat involved data preparation is new.
+**Approaches Compared**
+
+* Briefly describe the three segmentation approaches you explored
+* Note one strength or weakness of each approach
+
+**Recommended Approach**
+
+* Which approach would you recommend the team use as a starting point?
+* Why?
+
+**Key Employee Segments or Patterns**
+
+* What were the most important patterns in attrition risk?
+* Did different approaches highlight different kinds of employee groups?
+
+**Proposed Implications**
+
+* What might these results imply for how the firm thinks about retention risk?
+* Do different employee segments suggest different kinds of follow-up or intervention?
+
+**Limitations & Next Steps**
+
+* What are the main limitations of the analysis?
+* What would you want the team to do next?
+
 :::
 
-So far, we've limited our clustering to just five numeric features.  
-But in reality, companies might want to use **all available information** — including categorical variables like job role, marital status, and department — to uncover richer segmentation patterns.
-
-That introduces two new challenges:
-
-1. **K-means clustering only works with numeric inputs.**  
-   So how do we use categorical variables?
-
-2. **K-means works best with fewer dimensions.**  
-   But after we include all those dummy variables, we get many more!
-
-This exercise guides you through a workflow to overcome both challenges.
-
-
-
-**(a)** Run the data preparation pipeline below that:
-
-- Removes `employee_number` (a unique ID)
-- Removes `attrition` (our outcome variable — we want to use it *after* clustering)
-- Converts categorical variables into dummy (one-hot encoded) columns
-- Normalises all numeric columns
-
-```{r}
-#| eval: false
-rec <- 
-    recipe(~ ., data = df) |>
-    # Remove these variables from processing pipeline
-    update_role(employee_number, new_role = "id") |>
-    update_role(attrition, new_role = "outcome") |>
-    # Drop variables that are constant across all rows
-    step_zv(all_predictors()) |>
-    # Create "Dummmy Variables" from Categoricals
-    step_dummy(all_nominal_predictors()) |>
-    # normalize all numerics, as before, but across all
-    step_normalize(all_numeric_predictors())
-
-df_pca_all <- 
-    prep(rec) |> 
-    bake(new_data = NULL) |>
-    # drop these from the PCA
-    select(-employee_number, -attrition)
-
-```
-
-**(b)** What does the `step_dummy()` line do?
-Why does this solve the problem we mentioned above — that K-means requires numeric inputs?
-
-**(c)** The pipeline also includes `step_normalize(all_numeric_predictors())`, but this doesn’t affect the dummy variables.
-Why might that be a good thing? What could go wrong if we normalised dummy variables?
-
-**(d)** Why do we remove `employee_number` and `attrition` after the `bake()` step?
-
-**(e)** Run PCA on the dataframe created in (a) and investigate the output. Think about how many components you would want to keep for the K-means analysis.
-
-```{r}
-#| eval: false
-pca_model <- 
-    prcomp(df_pca_all, 
-           center = FALSE, 
-           scale. = FALSE
-           )
-summary(pca_model)
-
-fviz_contrib(pca_model, choice = "var", axes = 2)
-
-
-```
-
-**(f)** Run the code below to keep the first 2 Principal Components. Can you explain why we chose to keep only the first two?
-
-```{r}
-#| eval: false 
-df_pca_2 <- as_tibble(pca_model$x[, 1:2])
-```
-
-**(g)** Use the Elbow method to determine the number of clusters you want to use in your K-means analysis. How many clusters would you choose?
-
-```{r}
-#| eval: false
-fviz_nbclust(
-  df_pca_2, 
-  kmeans,
-  method = "wss",     # Within-cluster sum of squares
-  k.max = 10,
-  nstart = 10
-)
-```
-
-**(h)** Run the code below to run K-means clustering with `k=3` clusters.
-
-```{r}
-#| eval: false
-set.seed(123)
-kmeans_pca <- kmeans(df_pca_2, centers = 3, nstart = 10)
-```
-
-**(i)** Visualise the PCA clustering results using the code below. Did the three cluster model perform better compared to Exercises 4 and 6? Try and explain why.
-
-```{r}
-#| eval: false
-fviz_cluster(kmeans_pca, data = df_pca_2)
-```
+*Write your answer here.*
 
 <!-- BEGIN PROFILE:r-teaching-guide -->
+
 ::: {.content-visible when-profile="r-teaching-guide"}
 
 ::: {.teaching-block}
@@ -138,61 +70,45 @@ Teaching Note
 
 ::: {.teaching-block-body}
 
-🎯 **Learning Objective** 
+🎯 **Learning Objective**
 Students should:
 
-- Understand the challenges of clustering with both numeric and categorical data.
-- Recognize how dummy coding and scaling prepare data for clustering.
-- Understand the role of PCA in reducing dimensionality when working with high-dimensional data.
-- Be exposed to real-world workflows combining preprocessing, PCA, and K-means clustering.
+* Synthesize the results from the earlier exercises into a short internal analytics memo.
+* Compare the strengths and weaknesses of different segmentation approaches.
+* Recommend a defensible starting point for future analysis.
+* Communicate analytical findings in a concise, decision-relevant way.
 
 ✅   **Core Concepts to Highlight**
 
-- Dummy coding (`step_dummy()`): Converts categorical variables into numeric format so they can be used in K-means.
-- Why not normalize dummies?: 0/1 coding should be preserved to retain their meaning and avoid distorting distance.
-- Dimensionality and PCA: High-dimensional clustering can be unstable; PCA helps compress relevant variation into fewer features.
-- Roles in recipes: Using `update_role()` to exclude outcome/ID variables from preprocessing.
-- Pipeline logic: Walk through the full transformation > PCA > clustering chain.
-
+* This memo is not just a summary of the final model. It is a comparison across methods.
+* A strong analytics memo should connect method choice to business usefulness.
+* The richer 5-variable K-means model appears to reveal more than one higher-attrition profile, which is the main analytical payoff of the tutorial.
+* Students should distinguish descriptive segmentation from causal explanation or prediction.
 
 💬 **Suggested In-Class Prompts** (if needed)
 
-"What would happen if we left the categorical variables as-is?"
-
-"Why might a high number of dimensions be a problem for clustering?"
-
-"What does the PCA plot tell us about the data’s structure?"
+* “What did the simple rule-of-thumb segmentation capture reasonably well?”
+* “What did the 2-variable K-means add, if anything?”
+* “Why might the 5-variable K-means be more useful for an analytics team, even if it is less transparent?”
+* “What would you want to validate before the firm acted on these segments?”
 
 📌 **Common Misunderstandings**
 
-"Dummy variables are numeric, so they should be scaled."	
-
-* Dummy variables are already on a comparable 0/1 scale. Scaling distorts their meaning.
-
-"PCA makes the clustering more accurate."	
-
-* PCA simplifies the space; it may improve interpretability or speed, but not always clustering accuracy.
-
-"We can use attrition in the clustering."	
-
-* No — this would make the clustering predictive rather than exploratory. We use it after clustering to describe the segments.
-
-"All data prep is done automatically."	
-
-* Emphasize the explicit choices in the recipe: what’s included, excluded, and how each transformation works.
-
-"Two components = 2 variables."	
-
-* PCA components are linear combinations of many variables, not a one-to-one replacement.
+* Writing only about the 5-variable K-means and ignoring the earlier approaches
+* Treating segmentation output as a final decision rule rather than an exploratory tool
+* Overclaiming that the richer model proves the causes of attrition
+* Confusing descriptive employee profiles with predictive or causal findings
 
 :::
 
 :::
 
 :::
+
 <!-- END PROFILE:r-teaching-guide -->
 
 <!-- BEGIN PROFILE:r-solutions -->
+
 ::: {.content-visible when-profile="r-solutions" when-profile="r-teaching-guide"}
 
 ::: {.solution-block}
@@ -203,87 +119,44 @@ Solution
 
 ::: {.solution-block-body}
 
-**(a)** Data Prep Pipeline
+**Illustrative answer only. This is not the only defensible memo.**
 
-The provided code correctly does the following:
+**Problem Statement**
+The analytics team wants to understand whether different types of employees show different attrition patterns. Segmenting employees can help the firm move beyond one-off cases and identify broader risk profiles that may be useful for workforce planning and retention strategy.
 
-- Uses `recipes::recipe()` to set up a preprocessing workflow
-- Removes `employee_number` (set as "id" role)
-- Removes `attrition` (set as "outcome" role)
-- Handles constant columns using `step_zv()`
-- Encodes all categorical variables via `step_dummy()`
-- Normalizes all numeric variables (excluding dummy variables) via `step_normalize()`
-- Applies `prep()` and `bake()` to generate the transformed dataset
+**Approaches Compared**
 
-**(b)** What does `step_dummy()` do and why is it helpful?
+* The **rule-of-thumb segmentation** was simple and easy to explain, but it depended heavily on analyst-chosen cutoffs.
+* The **2-variable K-means model** produced a result that looked quite similar to the rule-based grouping, suggesting that in a simple two-variable setting K-means may not add much new insight.
+* The **5-variable K-means model** used a richer employee profile and appeared to uncover more informative differences across employee groups.
 
-`step_dummy()` transforms each categorical variable into one or more binary columns (0/1) — one for each category level (except the reference category, unless one_hot = TRUE).
+**Recommended Approach**
 
-This solves the problem that K-means only works with numeric inputs.
-By converting categoricals to numeric 0/1 dummies, we can now use them in the clustering algorithm.
+* The **5-variable K-means model** is the most useful starting point for the analytics team.
+* It captures a broader employee profile than the simpler methods and appears to reveal more than one higher-attrition segment.
+* The simpler approaches remain useful as transparent benchmarks, but they are less informative than the richer clustering model.
 
-**(c)** Why not normalize dummy variables?
+**Key Employee Segments or Patterns**
 
-Dummy variables only take values of 0 or 1. If we normalize them:
+* One higher-risk cluster appears to be characterised by **low job satisfaction and relatively low income**.
+* Another higher-risk cluster appears to be characterised by a **much longer commute**, even though job satisfaction is not especially low.
+* A more stable cluster appears older, higher-income, and longer-tenured, with substantially lower attrition.
 
-- The 0/1 scale becomes continuous (e.g., -0.5 to +0.5), which changes the meaning.
-- It could distort distance calculations in K-means by over-emphasizing categorical differences.
+**Proposed Implications**
 
-For example, if a rare category becomes a high-magnitude value after normalization, it may exaggerate its influence in clustering.
+* The results suggest that the firm should not think about attrition risk as coming from a single type of employee.
+* Different employee segments may require different kinds of follow-up. For example, one group may point toward dissatisfaction and compensation concerns, while another may point toward commute burden and work-location issues.
+* The richer segmentation may therefore be more useful for targeting further analysis and designing more tailored retention responses.
 
-Thus, dummy variables are best left as 0/1.
+**Limitations & Next Steps**
 
-**(d)** Why do we remove employee_number and attrition after `bake()`?
-
-These variables were excluded from the preprocessing steps via role assignment — but they still remain in the baked dataset.
-
-We remove them after `bake()` because:
-
-- `employee_number` is a unique ID and doesn't help clustering (and could distort distance).
-- `attrition` is an outcome variable, not a predictor — we use it after clustering to describe the segments, not to define them.
-
-**(e)** PCA Output
-
-The PCA model reveals how much variance is explained by each principal component.
-
-Key observations:
-
-- The first few components (e.g., PC1 and PC2) typically capture a large share of the variation.
-- Component contribution plots help interpret what kinds of variables dominate each component.
-
-**(f)** Why keep only 2 components?
-
-Choosing only 2 components as these pick up the most important features from back in Ex 1.
-
-**(g)** Choosing k via the Elbow method
-
-The Elbow plot helps determine the optimal number of clusters by showing diminishing returns in reducing within-cluster sum of squares.
-
-Look for a point where the curve "bends" — this is often between k = 3 to 4.
-
-Here, k = 3 is where there is a clear bend.
-
-**(h)** Run K-means clustering
-
-Code is correct. Students should observe that:
-
-- The `kmeans()` function uses the PCA-transformed data
-- `set.seed(123)` ensures reproducibility
-- `nstart = 10` gives multiple initializations
-
-**(i)** Cluster Visualisation
-
-The PCA cluster plot should show:
-
-- Clearer separation between clusters than in previous exercises
-- More balanced or tighter groupings, depending on how well PCA compressed the data
-
-The performance may feel better due to using more features and reducing noise through PCA.
-However, interpretation of clusters becomes harder, since we're no longer in the original feature space.
+* This analysis is descriptive, so the clusters do not show that these characteristics cause attrition.
+* Test whether these segments remain stable over time and examine whether targeted retention strategies differ across the higher-risk groups.
 
 :::
 
 :::
 
 :::
+
 <!-- END PROFILE:r-solutions -->
