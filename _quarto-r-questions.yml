@@ -1,7 +1,7 @@
 project:
   render:
     - tutorial.qmd
-title: 'Tutorial 9: Descriptive Analytics in HRM'
+title: 'Tutorial 7: Descriptive Analytics in HRM'
 execute:
   eval: false
 format:

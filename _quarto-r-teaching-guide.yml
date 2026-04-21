@@ -1,7 +1,7 @@
 project:
   render:
     - tutorial.qmd
-title: 'Tutorial 9 Teaching Guide: Descriptive Analytics in HRM'
+title: 'Tutorial 7 Teaching Guide: Descriptive Analytics in HRM'
 format:
   html:
     output-file: "tutorial-09-teaching-guide"
