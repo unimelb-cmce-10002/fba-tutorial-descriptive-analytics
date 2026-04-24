@@ -4,5 +4,5 @@ project:
 title: 'Tutorial 7 Teaching Guide: Descriptive Analytics in HRM'
 format:
   html:
-    output-file: "tutorial-09-teaching-guide"
+    output-file: "tutorial-07-teaching-guide"
     output-ext:  "html"
