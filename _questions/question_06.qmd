@@ -50,6 +50,7 @@ kmeans_full <-
 #| eval: false
 fviz_cluster(
   kmeans_full,
+  geom = "point",
   data = df_scaled,
   ggtheme = theme_minimal(),
   main = "5-variable K-means clustering"
@@ -191,6 +192,7 @@ Students should produce the cluster plot and use it as one input into interpreta
 fviz_cluster(
   kmeans_full,
   data = df_scaled,
+  geom = "point",
   ggtheme = theme_minimal(),
   main = "5-variable K-means clustering"
 )

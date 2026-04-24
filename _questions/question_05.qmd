@@ -157,6 +157,7 @@ kmeans_small <-
 fviz_cluster(
   kmeans_small,
   data = df_scaled_small,
+  geom = "point",
   ggtheme = theme_minimal(),
   main = "2-variable K-means clustering"
 )
